@@ -36,6 +36,7 @@ const SkillsForm = ({ data, onChange }) => {
                     placeholder='Enter a skill (e.g, JavaScript, Project Management'
                     className='flex-1 px-3 py-2 text-sm'
                     value={newSkill}
+                    onChange={e => setNewSkill(e.target.value)}
                     onKeyDown={handleKeyPress}
                 />
                 <button
