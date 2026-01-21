@@ -2,8 +2,15 @@ import { FilePenLineIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloud, UploadCl
 import React, { useEffect, useState } from 'react'
 import { dummyResumeData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import api from '../config/api'
+import toast from 'react-hot-toast'
 
 const Dashboard = () => {
+
+    const { user, token } = useSelector(state => state.auth)
+
+
 
     const colors = ['#9333ea', '#d97706', '#dc2626', '#0284c7', '#16a34a']
 
@@ -17,15 +24,23 @@ const Dashboard = () => {
 
     const navigate = useNavigate()
 
+    const createResume = async (event) => {
+        try {
+            event.preventDefault();
+            const { data } = await api.post('/api/resumes/create', { title }, { headers: { Authorization: token } });
+            setAllResumes([...allResumes, data.resume]);
+            setTitle('')
+            setShowCreateResume(false)
+            navigate(`/app/bulder/${data.resume._id}`)
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
     const loadAllResumes = async () => {
         setAllResumes(dummyResumeData)
     }
 
-    const createResume = async (event) => {
-        event.preventDefault()
-        setShowCreateResume(false)
-        navigate(`/app/builder/${title}`)
-    }
 
     const uploadResume = async (event) => {
         event.preventDefault()
