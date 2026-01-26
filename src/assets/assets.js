@@ -1,5 +1,30 @@
 import dummy_profile from './dummy_profile.png'
 
+export const resumeDataTemplate = [
+    {
+        name: "Classic Resume",
+        value: "classic",
+        image_src: "/images/cv-templates/classic.jpg"
+    },
+    {
+        name: "Minimal Resume",
+        value: "minimal",
+        image_src: "/images/cv-templates/minimal.jpg"
+    },
+
+    {
+        name: "Minimal Image Resume",
+        value: "minimal-image",
+        image_src: "/images/cv-templates/minimal_image.jpg"
+    },
+
+    {
+        name: "Modern Resume",
+        value: "modern",
+        image_src: "/images/cv-templates/modern.jpg"
+    },
+]
+
 export const dummyResumeData = [
     {
         // ----------------------------------------------------- Resume 1 ------------------------------------------------------

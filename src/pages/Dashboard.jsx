@@ -1,15 +1,17 @@
 import { FilePenLineIcon, LoaderCircleIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloud, UploadCloudIcon, XIcon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { dummyResumeData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import api from '../config/api'
 import toast from 'react-hot-toast';
 import pdfToText from 'react-pdftotext'
+import CreateResumeModal from '../components/app/CreateResumeModal'
+import i18next from 'i18next'
 
 const Dashboard = () => {
 
-    const { user, token } = useSelector(state => state.auth)
+    const { user, token } = useSelector(state => state.auth);
+    const language = i18next.language
 
 
 
@@ -19,7 +21,8 @@ const Dashboard = () => {
     const [showCreateResume, setShowCreateResume] = useState(false)
     const [showUploadResume, setShowUploadResume] = useState(false)
 
-    const [title, setTitle] = useState('')
+    const [title, setTitle] = useState('');
+    const [template, setTemplate] = useState('classic')
     const [resume, setResume] = useState(null)
     const [editResumeId, setEditResumeId] = useState('');
     const [isLoading, setIsLoading] = useState(false)
@@ -133,7 +136,7 @@ const Dashboard = () => {
                         return (
                             <button
                                 key={resume._id.toString()}
-                                onClick={() => navigate(`/app/builder/${resume._id}`)}
+                                onClick={() => navigate(`/${language}/app/builder/${resume._id}`)}
                                 className='relative w-full sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 border group hover:shadow-lg transition-all duration-300 cursor-pointer'
                                 style={{
                                     background: `linear-gradient(135deg, ${baseColor}10, ${baseColor}40)`,
@@ -156,31 +159,7 @@ const Dashboard = () => {
                 </div>
 
                 {showCreateResume && (
-                    <form
-                        onSubmit={createResume}
-                        onClick={() => setShowCreateResume(false)}
-                        action={""}
-                        className='fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center'
-                    >
-                        <div onClick={e => e.stopPropagation()} className='relative bg-slate-50 border shadow-md rounded-lg w-full max-w-sm p-6 '>
-                            <h2 className='text-xl font-bold mb-4'>Create a Resume</h2>
-                            <input
-                                onChange={(e) => setTitle(e.target.value)}
-                                value={title}
-                                type='text'
-                                placeholder='Enter Resume Title'
-                                className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600'
-                                required
-                            />
-                            <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors'>
-                                Create Resume
-                            </button>
-                            <XIcon
-                                className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors'
-                                onClick={() => { setShowCreateResume(false), setTitle('') }}
-                            />
-                        </div>
-                    </form>
+                    <CreateResumeModal createResume={createResume} setShowCreateResume={setShowCreateResume} setTitle={setTitle} title={title} template={template} setTemplate={setTemplate} />
                 )}
 
                 {showUploadResume && (
