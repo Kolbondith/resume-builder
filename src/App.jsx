@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import { Toaster } from 'react-hot-toast';
 import i18next from "i18next";
 import { Navigate } from "react-router-dom";
+import Templates from "./pages/Templates";
+import HomeLayout from "./pages/HomeLayout";
 
 function LanguageWrapper() {
   const { lang } = useParams();
@@ -65,7 +67,12 @@ function App() {
         {/* Wrap ALL multilingual routes here */}
         <Route path="/:lang" element={<LanguageWrapper />}>
 
-          <Route index element={<Home />} />
+          {/* Home and Template Pages wrapped in HomeLayout to show Header */}
+          <Route element={<HomeLayout />}>
+            <Route index element={<Home />} />
+            <Route path="templates" element={<Templates />} />
+
+          </Route>
 
           <Route path="app" element={<Layout />}>
             <Route index element={<Dashboard />} />

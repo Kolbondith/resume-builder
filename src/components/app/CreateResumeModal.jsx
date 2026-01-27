@@ -1,6 +1,7 @@
 import { Layout, XIcon, CheckCircle } from 'lucide-react'
 import React from 'react'
 import { resumeDataTemplate } from '../../assets/assets'
+import { motion } from 'framer-motion';
 
 const CreateResumeModal = ({
     createResume,
@@ -10,15 +11,25 @@ const CreateResumeModal = ({
     template,
     setTemplate
 }) => {
+    const modalVariants = {
+        hidden: { opacity: 0, y: "-50px" },
+        visible: { opacity: 1, y: "0", transition: { duration: 0.3 } },
+        exit: { opacity: 0, y: "50px", transition: { duration: 0.3 } }
+    };
     return (
         <form
             onSubmit={createResume}
             onClick={() => setShowCreateResume(false)}
             className="fixed inset-0 bg-black/70 backdrop-blur z-10 flex items-center justify-center"
+
         >
-            <div
+            <motion.div
                 onClick={(e) => e.stopPropagation()}
-                className="relative bg-slate-50 border shadow-md rounded-lg w-full max-w-5xl p-6"
+                className="relative bg-slate-50 border shadow-md rounded-lg w-full max-w-5xl px-6 py-12"
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                variants={modalVariants}
             >
                 <h2 className="text-xl font-bold mb-4">Create a Resume</h2>
 
@@ -27,8 +38,9 @@ const CreateResumeModal = ({
                     value={title}
                     type="text"
                     placeholder="Enter Resume Title"
-                    className="w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600 max-w-sm"
+                    className="w-full px-4 py-2 mb-4 focus:border-green-500 ring-green-600 max-w-sm"
                     required
+                    autoFocus
                 />
 
                 <div className="flex gap-2 items-center mb-3">
@@ -57,6 +69,8 @@ const CreateResumeModal = ({
                                     draggable={false}
                                 />
 
+                                <p className={`mt-2 ${isSelected ? 'text-green-500' : 'text-slate-600'}`}>{cvTemplate.name}</p>
+
                                 {/* Tick icon */}
                                 {isSelected && (
                                     <div className="absolute top-2 right-2 bg-white rounded-full">
@@ -83,7 +97,7 @@ const CreateResumeModal = ({
                         setTitle('')
                     }}
                 />
-            </div>
+            </motion.div>
         </form>
     )
 }
