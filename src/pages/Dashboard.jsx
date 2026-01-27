@@ -1,14 +1,19 @@
-import { FilePenLineIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloud, UploadCloudIcon, XIcon } from 'lucide-react'
+import { FilePenLineIcon, LoaderCircleIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloud, UploadCloudIcon, XIcon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { dummyResumeData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import api from '../config/api'
-import toast from 'react-hot-toast'
+import toast from 'react-hot-toast';
+import pdfToText from 'react-pdftotext'
+import CreateResumeModal from '../components/app/CreateResumeModal'
+import i18next from 'i18next'
+import EditResumeModal from '../components/app/EditResumeModal'
+import UploadResumeModal from '../components/app/UploadResumeModal'
 
 const Dashboard = () => {
 
-    const { user, token } = useSelector(state => state.auth)
+    const { token } = useSelector(state => state.auth);
+    const language = i18next.language
 
 
 
@@ -18,46 +23,81 @@ const Dashboard = () => {
     const [showCreateResume, setShowCreateResume] = useState(false)
     const [showUploadResume, setShowUploadResume] = useState(false)
 
-    const [title, setTitle] = useState('')
+    const [title, setTitle] = useState('');
+    const [template, setTemplate] = useState('classic')
     const [resume, setResume] = useState(null)
-    const [editResumeId, setEditResumeId] = useState('')
+    const [editResumeId, setEditResumeId] = useState('');
+    const [isLoading, setIsLoading] = useState(false)
 
     const navigate = useNavigate()
 
     const createResume = async (event) => {
         try {
             event.preventDefault();
-            const { data } = await api.post('/api/resumes/create', { title }, { headers: { Authorization: token } });
+            const { data } = await api.post('/api/resumes/create', { title, template }, { headers: { Authorization: token } });
             setAllResumes([...allResumes, data.resume]);
             setTitle('')
             setShowCreateResume(false)
-            navigate(`/app/bulder/${data.resume._id}`)
+            navigate(`/${language}/app/builder/${data.resume._id}`)
         } catch (error) {
             toast.error(error.message)
         }
     }
 
     const loadAllResumes = async () => {
-        setAllResumes(dummyResumeData)
+        try {
+            const { data } = await api.get('/api/users/resumes', { headers: { Authorization: token } });
+            setAllResumes(data.resumes)
+        } catch (error) {
+            toast.error(error?.message)
+        }
     }
 
 
     const uploadResume = async (event) => {
         event.preventDefault()
-        setShowUploadResume(false)
-        navigate(`/app/builder/${title}`)
+        setIsLoading(true)
+        try {
+            const resumeText = await pdfToText(resume)
+            const { data } = await api.post('/api/ai/upload-resume', { title, resumeText }, { headers: { Authorization: token } });
+            setTitle('')
+            setResume(null)
+            setShowUploadResume(false)
+            navigate(`/app/builder/${data.resumeId}`)
+        } catch (error) {
+            toast.error(error?.message)
+        }
+
+        setIsLoading(false)
     }
 
     const editTitle = async (event) => {
-        event.preventDefault()
+        try {
+            event.preventDefault()
+            const { data } = await api.put(`/api/resumes/update`, { resumeId: editResumeId, resumeData: { title } }, { headers: { Authorization: token } })
+            setAllResumes(allResumes.map(resume => resume._id === editResumeId ? { ...resume, title } : resume))
+            setTitle('')
+            setEditResumeId('')
+            toast.success(data?.message)
+        } catch (error) {
+            toast.error(error?.message)
+        }
     }
 
     const deleteResume = async (resumeId) => {
-        const confirm = window.confirm('Are you sure you want to delete this resume?')
 
-        if (confirm) {
-            setAllResumes(prev => prev.filter(resume => resume._id !== resumeId))
+        try {
+            const confirm = window.confirm('Are you sure you want to delete this resume?')
+
+            if (confirm) {
+                const { data } = await api.delete(`/api/resumes/delete/${resumeId}`, { headers: { Authorization: token } });
+                setAllResumes(prev => prev.filter(resume => resume._id !== resumeId))
+                toast.success(data?.message)
+            }
+        } catch (error) {
+            toast.error(error?.message)
         }
+
 
     }
 
@@ -98,7 +138,7 @@ const Dashboard = () => {
                         return (
                             <button
                                 key={resume._id.toString()}
-                                onClick={() => navigate(`/app/builder/${resume._id}`)}
+                                onClick={() => navigate(`/${language}/app/builder/${resume._id}`)}
                                 className='relative w-full sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 border group hover:shadow-lg transition-all duration-300 cursor-pointer'
                                 style={{
                                     background: `linear-gradient(135deg, ${baseColor}10, ${baseColor}40)`,
@@ -121,111 +161,15 @@ const Dashboard = () => {
                 </div>
 
                 {showCreateResume && (
-                    <form
-                        onSubmit={createResume}
-                        onClick={() => setShowCreateResume(false)}
-                        action={""}
-                        className='fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center'
-                    >
-                        <div onClick={e => e.stopPropagation()} className='relative bg-slate-50 border shadow-md rounded-lg w-full max-w-sm p-6 '>
-                            <h2 className='text-xl font-bold mb-4'>Create a Resume</h2>
-                            <input
-                                onChange={(e) => setTitle(e.target.value)}
-                                value={title}
-                                type='text'
-                                placeholder='Enter Resume Title'
-                                className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600'
-                                required
-                            />
-                            <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors'>
-                                Create Resume
-                            </button>
-                            <XIcon
-                                className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors'
-                                onClick={() => { setShowCreateResume(false), setTitle('') }}
-                            />
-                        </div>
-                    </form>
+                    <CreateResumeModal createResume={createResume} setShowCreateResume={setShowCreateResume} setTitle={setTitle} title={title} template={template} setTemplate={setTemplate} />
                 )}
 
                 {showUploadResume && (
-                    <form
-                        onSubmit={uploadResume}
-                        onChange={(e) => setTitle(e.target.value)}
-                        value={title}
-                        onClick={() => setShowUploadResume(false)}
-                        action={""}
-                        className='fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center'
-                    >
-                        <div onClick={e => e.stopPropagation()} className='relative bg-slate-50 border shadow-md rounded-lg w-full max-w-sm p-6 '>
-                            <h2 className='text-xl font-bold mb-4'>Upload a Resume</h2>
-                            <input
-                                onChange={(e) => setTitle(e.target.value)}
-                                value={title}
-                                type='text'
-                                placeholder='Enter Resume Title'
-                                className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600'
-                                required
-                            />
-                            <div>
-                                <label htmlFor='resume-input' className='block text-sm text-slate-700'>
-                                    Select Resume File
-                                    <div className='flex flex-col items-center justify-center gap-2 border group text-slate-400 border-slate-400 border-dashed rounded-md p-4 py-10 my-4 hover:border-green-500 hover:text-green-700 cursor-pointer transition-colors'>
-                                        {resume ? (
-                                            <p className='text-green-700'>{resume.name}</p>
-                                        ) : (
-                                            <>
-                                                <UploadCloud className='size-14 stroke-1' />
-                                                <p>Upload Resume</p>
-                                            </>
-                                        )}
-                                    </div>
-                                </label>
-                                <input
-                                    type='file'
-                                    id='resume-input'
-                                    accept='.pdf'
-                                    hidden
-                                    onChange={(e) => setResume(e.target.files[0])}
-                                />
-                            </div>
-                            <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors'>
-                                Upload Resume
-                            </button>
-                            <XIcon
-                                className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors'
-                                onClick={() => { setShowUploadResume(false), setTitle('') }}
-                            />
-                        </div>
-                    </form>
+                    <UploadResumeModal setResume={setResume} resume={resume} title={title} setTitle={setTitle} uploadResume={uploadResume} isLoading={isLoading} setShowUploadResume={setShowUploadResume} />
                 )}
 
                 {editResumeId && (
-                    <form
-                        onSubmit={editTitle}
-                        onClick={() => setEditResumeId('')}
-                        action={""}
-                        className='fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center'
-                    >
-                        <div onClick={e => e.stopPropagation()} className='relative bg-slate-50 border shadow-md rounded-lg w-full max-w-sm p-6 '>
-                            <h2 className='text-xl font-bold mb-4'>Edit Resume Title</h2>
-                            <input
-                                onChange={(e) => setTitle(e.target.value)}
-                                value={title}
-                                type='text'
-                                placeholder='Enter Resume Title'
-                                className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600'
-                                required
-                            />
-                            <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors'>
-                                Update
-                            </button>
-                            <XIcon
-                                className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors'
-                                onClick={() => { setEditResumeId(''), setTitle('') }}
-                            />
-                        </div>
-                    </form>
+                    <EditResumeModal editTitle={editTitle} setEditResumeId={setEditResumeId} title={title} setTitle={setTitle} />
                 )}
             </div>
         </div>
