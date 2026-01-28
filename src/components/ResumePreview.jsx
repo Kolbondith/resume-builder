@@ -3,6 +3,7 @@ import ModernTemplate from './templates/ModernTemplate'
 import ClassicTemplate from './templates/ClassicTemplate'
 import MinimalTemplate from './templates/MinimalTemplate'
 import MinimalImageTemplate from './templates/MinimalImageTemplate'
+import AccountingTemplate from './templates/AccountingTemplate'
 
 const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
 
@@ -10,6 +11,9 @@ const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
         switch (template) {
             case "modern":
                 return <ModernTemplate data={data} accentColor={accentColor} />
+
+            case "accounting":
+                return <AccountingTemplate data={data} accentColor={accentColor} />
 
             case "minimal-image":
                 return <MinimalImageTemplate data={data} accentColor={accentColor} />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { dummyResumeData } from '../assets/assets'
-import { ArrowLeftIcon, Briefcase, ChevronLeft, ChevronRight, DownloadIcon, EyeIcon, EyeOffIcon, FileText, FolderIcon, GraduationCap, Share2Icon, Sparkle, User } from 'lucide-react'
+
+import { ArrowLeftIcon, Briefcase, ChevronLeft, ChevronRight, DownloadIcon, EyeIcon, EyeOffIcon, FileText, FolderIcon, Globe2Icon, GraduationCap, Share2Icon, Sparkle, User } from 'lucide-react'
 import PersonalInfoForm from '../components/PersonalInfoForm'
 import ResumePreview from '../components/ResumePreview'
 import TemplateSelector from '../components/TemplateSelector'
@@ -14,6 +14,7 @@ import SkillsForm from '../components/SkillsForm'
 import { useSelector } from 'react-redux'
 import api from '../config/api'
 import toast from 'react-hot-toast'
+import LanguageForm from '../components/LanguageForm'
 
 const ResumeBuilder = () => {
 
@@ -29,6 +30,7 @@ const ResumeBuilder = () => {
         education: [],
         project: [],
         skills: [],
+        languages: [],
         template: "classic",
         accent_color: "#3B82F6",
         public: false,
@@ -62,7 +64,9 @@ const ResumeBuilder = () => {
         { id: "experience", name: "Experience", icon: Briefcase },
         { id: "education", name: "Education", icon: GraduationCap },
         { id: "projects", name: "Projects", icon: FolderIcon },
-        { id: "skills", name: "Skills", icon: Sparkle }
+        { id: "skills", name: "Skills", icon: Sparkle },
+        { id: "languages", name: "Languages", icon: Globe2Icon },
+
     ]
 
     const activeSection = sections[activeSectionIndex]
@@ -227,6 +231,13 @@ const ResumeBuilder = () => {
                                     <SkillsForm
                                         data={resumeData.skills}
                                         onChange={(data) => setResumeData(prev => ({ ...prev, skills: data }))}
+                                    />
+                                )}
+
+                                {activeSection.id === 'languages' && (
+                                    <LanguageForm
+                                        data={resumeData.languages}
+                                        onChange={(data) => setResumeData(prev => ({ ...prev, languages: data }))}
                                     />
                                 )}
                             </div>

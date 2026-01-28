@@ -99,11 +99,11 @@ const ClassicTemplate = ({ data, accentColor }) => {
                         PROJECTS
                     </h2>
 
-                    <ul className="space-y-3 ">
+                    <ul className="space-y-3">
                         {data.project.map((proj, index) => (
                             <div key={index} className="flex justify-between items-start border-l-3 border-gray-300 pl-6">
                                 <div>
-                                    <li className="font-semibold text-gray-800 ">{proj.name}</li>
+                                    <li className="font-semibold text-gray-800">{proj.name}</li>
                                     <p className="text-gray-600">{proj.description}</p>
                                 </div>
                             </div>
@@ -149,6 +149,23 @@ const ClassicTemplate = ({ data, accentColor }) => {
                         {data.skills.map((skill, index) => (
                             <div key={index} className="text-gray-700">
                                 • {skill}
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* Languages */}
+            {data.languages && data.languages.length > 0 && (
+                <section className="mb-6">
+                    <h2 className="text-xl font-semibold mb-4" style={{ color: accentColor }}>
+                        LANGUAGES
+                    </h2>
+
+                    <div className="space-y-3">
+                        {data.languages.map((lang, index) => (
+                            <div key={index} className="text-gray-700">
+                                <p className="font-semibold text-gray-800">{lang.name} ({lang.level})</p>
                             </div>
                         ))}
                     </div>

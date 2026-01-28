@@ -11,6 +11,11 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
             preview: "Sleek design with strategic use of color and clean, professional typography."
         },
         {
+            id: "accounting",
+            name: "Accounting",
+            preview: "Sleek design with strategic use of color and clean, professional typography."
+        },
+        {
             id: "modern",
             name: "Modern",
             preview: "Contemporary layout with bold accents, strong visual hierarchy, and modern font choices."

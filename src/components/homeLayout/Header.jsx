@@ -12,9 +12,9 @@ const Header = () => {
         <div>
             {/* Navbar */}
             <nav className="z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-40 text-sm">
-                <a href="https://prebuiltui.com">
+                <LinkComponent to="">
                     <img src='/logo.svg' alt='logo' />
-                </a>
+                </LinkComponent>
 
                 <div className="hidden md:flex items-center gap-8 transition duration-500 text-slate-800">
                     <a href="#" className="hover:text-green-600 transition">{t('Home')}</a>

@@ -1,8 +1,41 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { resumeDataTemplate } from '../assets/assets';
+import SelectResumeModal from '../components/app/SelectResumeModal';
+import toast from 'react-hot-toast';
+import api from '../config/api';
+import { useSelector } from 'react-redux';
+import i18next from 'i18next';
 
 const Templates = () => {
+    const { token } = useSelector(state => state.auth)
+    const language = i18next.language
+    const navigate = useNavigate()
+    const [selectedTemplate, setSelectedTemplate] = useState('');
+
+    const [title, setTitle] = useState('');
+
+    const [openModal, setOpenModal] = useState(false)
+
+    const templateClicked = (template) => {
+        setSelectedTemplate(template)
+        setOpenModal(true);
+
+
+    }
+
+    const createResume = async (event) => {
+        try {
+            event.preventDefault();
+            const { data } = await api.post('/api/resumes/create', { title, template: selectedTemplate }, { headers: { Authorization: token } });
+
+            setTitle('')
+            setOpenModal(false)
+            navigate(`/${language}/app/builder/${data.resume._id}`)
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
     return (
         <div className="flex flex-col min-h-screen items-center px-6 py-12">
 
@@ -30,7 +63,7 @@ const Templates = () => {
                             <button
                                 key={cvTemplate.value}
                                 type="button"
-                                // onClick={() => setTemplate(cvTemplate.value)}
+                                onClick={() => templateClicked(cvTemplate.value)}
                                 className='relative group'
 
                             >
@@ -44,9 +77,9 @@ const Templates = () => {
 
                                     {/* Button that appears on hover */}
                                     <div className="absolute bottom-0 left-0 right-0 bg-green-600 text-white py-2 text-center transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                                        <button className="w-full">
+                                        <div className="w-full">
                                             Use Template
-                                        </button>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -61,7 +94,7 @@ const Templates = () => {
                 </div>
             </div>
 
-
+            {openModal && <SelectResumeModal setOpenModal={setOpenModal} title={title} setTitle={setTitle} template={selectedTemplate} createResume={createResume} />}
         </div>
     );
 };
