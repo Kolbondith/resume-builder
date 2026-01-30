@@ -1,4 +1,4 @@
-import { Lock, Mail, User2Icon } from 'lucide-react'
+import { Lock, Mail, User2Icon, UserIcon } from 'lucide-react'
 import React, { useState } from 'react'
 import api from '../config/api'
 import { useDispatch } from 'react-redux'
@@ -9,34 +9,44 @@ import { useRef } from 'react'
 
 
 
-const Login = () => {
+const Register = () => {
 
-    const query = new URLSearchParams(window.location.search)
+
     const urlState = query.get('state')
     const googleRef = useRef(null);
-    const [state, setState] = useState(urlState || 'login')
+
     const dispatch = useDispatch()
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        password: ''
+        password: '',
+        confirmPassword: ''
     })
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
-        try {
-            const { data } = await api.post(`/api/users/login`, formData)
-            console.log(data)
-            dispatch(login({ token: data.token, user: data.user }))
-            localStorage.setItem('token', data.token)
-            toast.success(data.message)
-        } catch (error) {
-            console.log(error)
-            toast.error(error?.response?.data?.message || error?.message)
+        // Password match check
+        if (formData.password !== formData.confirmPassword) {
+            return toast.error("Passwords do not match");
         }
 
-    }
+        try {
+            const { data } = await api.post(`/api/users/register`, {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password
+            });
+
+            dispatch(login({ token: data.token, user: data.user }));
+            localStorage.setItem('token', data.token);
+            toast.success(data.message);
+
+        } catch (error) {
+            toast.error(error?.response?.data?.message || error?.message);
+        }
+    };
+
 
     const handleGoogleLogin = async (credentialResponse) => {
         const token = credentialResponse.credential;
@@ -108,6 +118,19 @@ const Login = () => {
                     </div>
 
                     <div className="flex items-center w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all duration-200 focus-within:border-green-500 focus-within:shadow-md mt-4">
+                        <UserIcon className='size-6' color='gray' />
+                        <input
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            type="text"
+                            placeholder="User Name"
+                            className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full border-none focus:outline-none focus:ring-0 bg-none"
+                            required
+                        />
+                    </div>
+
+                    <div className="flex items-center w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all duration-200 focus-within:border-green-500 focus-within:shadow-md mt-4">
                         <Lock className='size-6 ' color='gray' />
                         <input
                             name="password"
@@ -115,6 +138,19 @@ const Login = () => {
                             onChange={handleChange}
                             type="password"
                             placeholder="Password"
+                            className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full border-none focus:outline-none focus:ring-0"
+                            required
+                        />
+                    </div>
+
+                    <div className="flex items-center w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all duration-200 focus-within:border-green-500 focus-within:shadow-md mt-4">
+                        <Lock className='size-6 ' color='gray' />
+                        <input
+                            name="confirmPassword"
+                            value={formData.password}
+                            onChange={handleChange}
+                            type="password"
+                            placeholder="Confirm Password"
                             className="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full border-none focus:outline-none focus:ring-0"
                             required
                         />
@@ -138,4 +174,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Register

@@ -4,8 +4,10 @@ import ClassicTemplate from './templates/ClassicTemplate'
 import MinimalTemplate from './templates/MinimalTemplate'
 import MinimalImageTemplate from './templates/MinimalImageTemplate'
 import AccountingTemplate from './templates/AccountingTemplate'
+import { PaintbrushIcon } from 'lucide-react'
+import ModernSplitTemplate from './templates/ModernSplitTemplate'
 
-const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
+const ResumePreview = ({ data, template, accentColor, classes = "", setShowTemplateDrawer }) => {
 
     const renderTemplate = () => {
         switch (template) {
@@ -29,8 +31,18 @@ const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
     }
 
     return (
-        <div className='w-full bg-gray-100'>
-            <div id="resume-preview" className={`border border-gray-200 print:shadow-none print:border-none ${classes}`}>
+        <div className='w-full '>
+            <div className='relative w-full'>
+                <button
+                    onClick={() => setShowTemplateDrawer(true)}
+                    className="absolute top-3 right-3 bg-white shadow p-2 rounded-md text-xs font-medium flex justify-center gap-2"
+                >
+                    <PaintbrushIcon className='size-4' />
+                    Change Template
+                </button>
+            </div>
+
+            <div id="resume-preview" className={`border border-gray-200 bg-white min-h-screen print:shadow-none print:border-none ${classes}`}>
                 {renderTemplate()}
             </div>
 
@@ -41,11 +53,17 @@ const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
                 }
 
                 @media print {
+                    * {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
                     html, body {
                     width: 8.5in;
                     height: 11in;
                     overflow: visible;
                     }
+
+                    
 
                     /* hide everything */
                     body * {

@@ -49,38 +49,41 @@ const CreateResumeModal = ({
                 </div>
 
                 {/* Templates */}
-                <div className="grid grid-cols-4 gap-4">
-                    {resumeDataTemplate.map((cvTemplate) => {
-                        const isSelected = template === cvTemplate.value
+                <div className="max-h-[45vh] overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                    <div className="grid grid-cols-4 gap-4">
+                        {resumeDataTemplate.map((cvTemplate) => {
+                            const isSelected = template === cvTemplate.value
 
-                        return (
-                            <button
-                                key={cvTemplate.value}
-                                type="button"
-                                onClick={() => setTemplate(cvTemplate.value)}
-                                className={`relative rounded-lg overflow-hidden border transition-all
+                            return (
+                                <button
+                                    key={cvTemplate.value}
+                                    type="button"
+                                    onClick={() => setTemplate(cvTemplate.value)}
+                                    className={`relative rounded-lg overflow-hidden border transition-all
                   ${isSelected ? 'border-green-500 ring-2 ring-green-400' : 'border-gray-200 hover:border-green-300'}
                 `}
-                            >
-                                <img
-                                    src={cvTemplate.image_src}
-                                    alt={cvTemplate.name}
-                                    className="w-full h-auto"
-                                    draggable={false}
-                                />
+                                >
+                                    <img
+                                        src={cvTemplate.image_src}
+                                        alt={cvTemplate.name}
+                                        className="w-full h-auto"
+                                        draggable={false}
+                                    />
 
-                                <p className={`mt-2 ${isSelected ? 'text-green-500' : 'text-slate-600'}`}>{cvTemplate.name}</p>
+                                    <p className={`mt-2 ${isSelected ? 'text-green-500' : 'text-slate-600'}`}>{cvTemplate.name}</p>
 
-                                {/* Tick icon */}
-                                {isSelected && (
-                                    <div className="absolute top-2 right-2 bg-white rounded-full">
-                                        <CheckCircle className="text-green-600" size={22} />
-                                    </div>
-                                )}
-                            </button>
-                        )
-                    })}
+                                    {/* Tick icon */}
+                                    {isSelected && (
+                                        <div className="absolute top-2 right-2 bg-white rounded-full">
+                                            <CheckCircle className="text-green-600" size={22} />
+                                        </div>
+                                    )}
+                                </button>
+                            )
+                        })}
+                    </div>
                 </div>
+
 
                 <div className='flex justify-center'>
                     <button className="w-full py-2 mt-6 bg-green-600 text-white rounded hover:bg-green-700 transition-colors max-w-sm">

@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux'
 import api from '../config/api'
 import toast from 'react-hot-toast'
 import LanguageForm from '../components/LanguageForm'
+import TemplateChooserDrawer from '../components/drawer/ChoseTemplateDrawer'
 
 const ResumeBuilder = () => {
 
@@ -56,7 +57,7 @@ const ResumeBuilder = () => {
 
     const [activeSectionIndex, setActiveSectionIndex] = useState(0);
     const [removeBackground, setRemoveBackground] = useState(false);
-
+    const [showTemplateDrawer, setShowTemplateDrawer] = useState(false);
 
     const sections = [
         { id: "personal", name: "Personal Info", icon: User },
@@ -154,9 +155,7 @@ const ResumeBuilder = () => {
                             <div className='flex justify-between items-center mb-6 border-b border-gray-300 py-1'>
                                 <div>
                                     <div className='flex items-center gap-2'>
-                                        <TemplateSelector
-                                            selectedTemplate={resumeData.template}
-                                            onChange={(template) => setResumeData(prev => ({ ...prev, template }))} />
+
                                         <ColorPicker
                                             selectedColor={resumeData.accent_color}
                                             onChange={(color) => setResumeData(prev => ({ ...prev, accent_color: color }))}
@@ -278,10 +277,21 @@ const ResumeBuilder = () => {
 
                         {/* Resume Preview */}
 
-                        <ResumePreview data={resumeData} template={resumeData.template} accentColor={resumeData.accent_color} />
+                        <ResumePreview data={resumeData} template={resumeData.template} accentColor={resumeData.accent_color} setShowTemplateDrawer={setShowTemplateDrawer} />
                     </div>
                 </div>
             </div>
+
+
+            <TemplateChooserDrawer
+                open={showTemplateDrawer}
+                onClose={() => setShowTemplateDrawer(false)}
+                onSelect={(templateId) =>
+                    setResumeData(prev => ({ ...prev, template: templateId }))
+                }
+                selectedTemplate={resumeData.template}
+            />
+
         </div>
     )
 }

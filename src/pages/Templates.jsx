@@ -18,9 +18,13 @@ const Templates = () => {
     const [openModal, setOpenModal] = useState(false)
 
     const templateClicked = (template) => {
-        setSelectedTemplate(template)
-        setOpenModal(true);
 
+        if (!token) {
+            navigate(`/${language}/app?state=signin`)
+        } else {
+            setSelectedTemplate(template)
+            setOpenModal(true);
+        }
 
     }
 

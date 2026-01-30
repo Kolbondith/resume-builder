@@ -23,6 +23,12 @@ export const resumeDataTemplate = [
         value: "modern",
         image_src: "/images/cv-templates/modern.jpg"
     },
+
+    {
+        name: "Accounting Resume",
+        value: "accounting",
+        image_src: "/images/cv-templates/accounting.jpg"
+    },
 ]
 
 export const dummyResumeData = [

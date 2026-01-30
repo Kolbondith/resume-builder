@@ -5,11 +5,23 @@ const AccountingTemplate = ({ data, accentColor = "#003d5b" }) => {
     // Helper to format dates for the right-hand column labels
     const formatDateRange = (start, end, isCurrent) => {
         if (!start) return "";
-        // const s = new Date(start).getFullYear();
-        const e = isCurrent ? "Depuis " + new Date(start).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : new Date(end).getFullYear();
-        return e;
-    };
 
+        const startDate = new Date(start).toLocaleDateString('en-US', {
+            month: 'short',
+            year: 'numeric'
+        });
+
+        if (isCurrent) {
+            return `${startDate} - Present`;
+        }
+
+        const endDate = new Date(end).toLocaleDateString('en-US', {
+            month: 'short',
+            year: 'numeric'
+        });
+
+        return `${startDate} - ${endDate}`;
+    };
     return (
         <div className="max-w-4xl mx-auto bg-white shadow-xl flex min-h-[1100px] font-sans text-slate-800">
 
@@ -35,7 +47,7 @@ const AccountingTemplate = ({ data, accentColor = "#003d5b" }) => {
                 <div className="px-8 py-4 space-y-10">
                     {/* Contact */}
                     <section>
-                        <h2 className="font-bold text-lg mb-4 border-b border-gray-300" style={{ color: accentColor }}>Coordonnées</h2>
+                        <h2 className="font-bold text-lg mb-4 border-b border-gray-300" style={{ color: accentColor }}>Personal Information</h2>
                         <div className="space-y-4 text-[13px]">
                             {data.personal_info?.phone && (
                                 <div className="flex items-center gap-3">
@@ -61,7 +73,7 @@ const AccountingTemplate = ({ data, accentColor = "#003d5b" }) => {
                     {/* Languages - Dynamic Pill indicators */}
                     {data.languages?.length > 0 && (
                         <section>
-                            <h2 className="font-bold text-lg mb-4 border-b border-gray-300" style={{ color: accentColor }}>Langues</h2>
+                            <h2 className="font-bold text-lg mb-4 border-b border-gray-300" style={{ color: accentColor }}>Languages</h2>
                             <div className="space-y-3 text-[13px]">
                                 {data.languages.map((lang, i) => (
                                     <div key={i} className="flex items-center justify-between">
@@ -69,7 +81,7 @@ const AccountingTemplate = ({ data, accentColor = "#003d5b" }) => {
                                         <div className="flex gap-1">
                                             {/* Simplified 3-pill logic based on level string */}
                                             <div className="w-6 h-1.5 rounded-full" style={{ backgroundColor: accentColor }}></div>
-                                            <div className="w-6 h-1.5 rounded-full" style={{ backgroundColor: lang.level?.includes('Native') || lang.level?.includes('C') ? accentColor : '#d1d5db' }}></div>
+                                            <div className="w-6 h-1.5 rounded-full" style={{ backgroundColor: lang.level?.includes('Native') || lang.level?.includes('F') ? accentColor : '#d1d5db' }}></div>
                                             <div className="w-6 h-1.5 rounded-full" style={{ backgroundColor: lang.level?.includes('Native') ? accentColor : '#d1d5db' }}></div>
                                         </div>
                                     </div>
@@ -81,7 +93,7 @@ const AccountingTemplate = ({ data, accentColor = "#003d5b" }) => {
                     {/* Competences (Skills) */}
                     {data.skills?.length > 0 && (
                         <section>
-                            <h2 className="font-bold text-lg mb-4 border-b border-gray-300" style={{ color: accentColor }}>Compétences</h2>
+                            <h2 className="font-bold text-lg mb-4 border-b border-gray-300" style={{ color: accentColor }}>Skill</h2>
                             <ul className="text-[13px] space-y-1.5 font-medium" style={{ color: accentColor }}>
                                 {data.skills.map((skill, i) => <li key={i}>{skill}</li>)}
                             </ul>
@@ -116,7 +128,7 @@ const AccountingTemplate = ({ data, accentColor = "#003d5b" }) => {
                     {/* Formation */}
                     {data.education?.length > 0 && (
                         <section>
-                            <h2 className="font-extrabold text-xl mb-6 uppercase tracking-tight" style={{ color: accentColor }}>Formation</h2>
+                            <h2 className="font-extrabold text-xl mb-6 uppercase tracking-tight" style={{ color: accentColor }}>Education</h2>
                             <div className="space-y-6">
                                 {data.education.map((edu, i) => (
                                     <div key={i} className="flex justify-between items-start">
@@ -136,7 +148,7 @@ const AccountingTemplate = ({ data, accentColor = "#003d5b" }) => {
                     {/* Professional Experience */}
                     {data.experience?.length > 0 && (
                         <section>
-                            <h2 className="font-extrabold text-xl mb-6 uppercase tracking-tight" style={{ color: accentColor }}>Expérience Professionnelle</h2>
+                            <h2 className="font-extrabold text-xl mb-6 uppercase tracking-tight" style={{ color: accentColor }}>Professional Experiences</h2>
                             <div className="relative border-l-2 ml-1.5 pl-8 space-y-10" style={{ borderColor: accentColor }}>
                                 {data.experience.map((exp, i) => (
                                     <div key={i} className="relative">
