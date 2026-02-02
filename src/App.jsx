@@ -13,6 +13,10 @@ import i18next from "i18next";
 import { Navigate } from "react-router-dom";
 import Templates from "./pages/Templates";
 import HomeLayout from "./pages/HomeLayout";
+import Register from "./pages/Register";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import Login from "./pages/Login";
+import PublicRoute from "./routes/PublicRoute";
 
 function LanguageWrapper() {
   const { lang } = useParams();
@@ -31,6 +35,8 @@ function LanguageWrapper() {
 
   return <Outlet />;
 }
+
+
 
 function App() {
   const dispatch = useDispatch();
@@ -74,9 +80,17 @@ function App() {
 
           </Route>
 
-          <Route path="app" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="builder/:resumeId" element={<ResumeBuilder />} />
+          <Route element={<ProtectedRoute />} >
+            <Route path="app" element={<Layout />}>
+              <Route index element={<Dashboard />} />
+
+              <Route path="builder/:resumeId" element={<ResumeBuilder />} />
+            </Route>
+          </Route>
+
+          <Route element={<PublicRoute />}>
+            <Route path="signin" element={<Login />} />
+            <Route path="signup" element={<Register />} />
           </Route>
 
           <Route path="view/:resumeId" element={<Preview />} />

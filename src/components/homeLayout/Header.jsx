@@ -21,13 +21,14 @@ const Header = () => {
                     <a href="#features" className="hover:text-green-600 transition">{t("Feature")}</a>
                     <a href="#testimonials" className="hover:text-green-600 transition">{t("Testimonial")}</a>
                     <a href="#cta" className="hover:text-green-600 transition">{t("Contact")}</a>
+                    <LinkComponent to={'/templates'} className="hover:text-green-600 transition">{t("Template")}</LinkComponent>
                 </div>
 
                 <div className="flex gap-2">
-                    <LinkComponent to={'/app?state=register'} className="hidden md:block px-6 py-2 bg-green-500 hover:bg-green-700 active:scale-95 transition-all rounded-full text-white" hidden={user}>
+                    <LinkComponent to={'/signup'} className="hidden md:block px-6 py-2 bg-green-500 hover:bg-green-700 active:scale-95 transition-all rounded-full text-white" hidden={user}>
                         {t("GetStart")}
                     </LinkComponent>
-                    <LinkComponent hidden={user} to={'/app?state=login'} className="hidden md:block px-6 py-2 border active:scale-95 hover:bg-slate-50 transition-all rounded-full text-slate-700 hover:text-slate-900" >
+                    <LinkComponent hidden={user} to={'/signin'} className="hidden md:block px-6 py-2 border active:scale-95 hover:bg-slate-50 transition-all rounded-full text-slate-700 hover:text-slate-900" >
                         {t("Login")}
                     </LinkComponent>
                     <LinkComponent

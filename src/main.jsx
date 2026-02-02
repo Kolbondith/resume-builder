@@ -7,9 +7,13 @@ import { store } from './app/store.js'
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import "./i18n/i18n";
+import i18next from 'i18next'
 
 createRoot(document.getElementById('root')).render(
-  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+  <GoogleOAuthProvider
+    clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}
+    locale={i18next.language === 'kh' ? 'km' : 'en'}
+  >
     <BrowserRouter>
       <Provider store={store}>
         <App />

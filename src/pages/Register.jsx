@@ -4,7 +4,7 @@ import api from '../config/api'
 import { useDispatch } from 'react-redux'
 import { login } from '../app/features/authSlice'
 import toast from 'react-hot-toast'
-import { GoogleLogin, useGoogleLogin } from '@react-oauth/google'
+import { GoogleLogin, } from '@react-oauth/google'
 import { useRef } from 'react'
 
 
@@ -12,8 +12,6 @@ import { useRef } from 'react'
 const Register = () => {
 
 
-    const urlState = query.get('state')
-    const googleRef = useRef(null);
 
     const dispatch = useDispatch()
     const [formData, setFormData] = useState({
@@ -22,6 +20,20 @@ const Register = () => {
         password: '',
         confirmPassword: ''
     })
+
+    const [emailError, setEmailError] = useState('')
+    const [passwordError, setPasswordError] = useState('')
+
+    const isValidEmail = (email) =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+
+    const isFormValid =
+        formData.name &&
+        formData.email &&
+        formData.password &&
+        formData.confirmPassword &&
+        !emailError &&
+        !passwordError
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -62,9 +74,35 @@ const Register = () => {
         }
     }
 
+
     const handleChange = (e) => {
         const { name, value } = e.target
-        setFormData(prev => ({ ...prev, [name]: value }))
+
+        setFormData(prev => {
+            const updated = { ...prev, [name]: value }
+
+            // Email validation
+            if (name === 'email') {
+                if (!isValidEmail(value)) {
+                    setEmailError('Invalid email address')
+                } else {
+                    setEmailError('')
+                }
+            }
+
+            // Password match validation
+            if (
+                updated.password &&
+                updated.confirmPassword &&
+                updated.password !== updated.confirmPassword
+            ) {
+                setPasswordError('Passwords do not match')
+            } else {
+                setPasswordError('')
+            }
+
+            return updated
+        })
     }
     return (
 
@@ -79,24 +117,22 @@ const Register = () => {
                     className="md:w-96 w-80 flex flex-col items-center justify-center"
                     onSubmit={handleSubmit}
                 >
-                    <h2 className="text-4xl text-gray-900 font-medium">Sign in</h2>
-                    <p className="text-sm text-gray-500/90 mt-3">Welcome back! Please sign in to continue</p>
+                    <h2 className="text-4xl text-gray-900 font-medium">Sign up</h2>
+                    <p className="text-sm text-gray-500/90 mt-3">Welcome to Resume! Please sign up to continue</p>
 
-                    <div className='py-4'>
-                        <GoogleLogin
-                            onSuccess={handleGoogleLogin}
-                            onError={() => console.log("Login Failed")}
-                            theme="outline"
-                            size="large"
-                            shape="pill"
-                            text="continue_with"
-                            width="300px"
+                    <div className="w-full flex justify-center py-4">
+                        <div className="w-full">
+                            <GoogleLogin
+                                onSuccess={handleGoogleLogin}
+                                onError={() => console.log("Login Failed")}
+                                theme="outline"
+                                size="large"
+                                shape="pill"
+                                text='continue_with'
 
-                        />
+                            />
+                        </div>
                     </div>
-
-
-
 
                     <div className="flex items-center gap-4 w-full my-5">
                         <div className="w-full h-px bg-gray-300/90"></div>
@@ -116,6 +152,13 @@ const Register = () => {
                             required
                         />
                     </div>
+
+                    {emailError && (
+                        <div className='w-full'>
+                            <p className="mt-1 text-xs text-red-500 text-left">{emailError}</p>
+                        </div>
+
+                    )}
 
                     <div className="flex items-center w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all duration-200 focus-within:border-green-500 focus-within:shadow-md mt-4">
                         <UserIcon className='size-6' color='gray' />
@@ -147,7 +190,7 @@ const Register = () => {
                         <Lock className='size-6 ' color='gray' />
                         <input
                             name="confirmPassword"
-                            value={formData.password}
+                            value={formData.confirmPassword}
                             onChange={handleChange}
                             type="password"
                             placeholder="Confirm Password"
@@ -156,18 +199,33 @@ const Register = () => {
                         />
                     </div>
 
+                    {passwordError && (
+                        <div className='w-full'>
+                            <p className="mt-1 text-xs text-red-500 text-left">{passwordError}</p>
+                        </div>
+
+                    )}
+
                     <div className="w-full flex items-center justify-between mt-8 text-gray-500/80">
                         <div className="flex items-center gap-2">
                             <input className="h-5" type="checkbox" id="checkbox" />
                             <label className="text-sm" htmlFor="checkbox">Remember me</label>
                         </div>
-                        <a className="text-sm underline" href="#">Forgot password?</a>
+
                     </div>
 
-                    <button type="submit" className="mt-8 w-full h-11 rounded-full text-white bg-indigo-500 hover:opacity-90 transition-opacity">
-                        Login
+                    <button
+                        type="submit"
+                        disabled={!isFormValid}
+                        className={`mt-8 w-full h-11 rounded-full text-white transition
+              ${isFormValid
+                                ? 'bg-green-500 hover:opacity-90'
+                                : 'bg-gray-300 cursor-not-allowed'}
+            `}
+                    >
+                        Register
                     </button>
-                    <p className="text-gray-500/90 text-sm mt-4">Don’t have an account? <a className="text-indigo-400 hover:underline" href="#">Sign up</a></p>
+                    <p className="text-gray-500/90 text-sm mt-4">Have an account? <a className="text-green-400 hover:underline" href="#">Sign in</a></p>
                 </form>
             </div>
         </div>
