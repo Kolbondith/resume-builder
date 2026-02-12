@@ -29,6 +29,12 @@ export const resumeDataTemplate = [
         value: "accounting",
         image_src: "/images/cv-templates/accounting.jpg"
     },
+    {
+        name: "Modern Split Resume",
+        value: "modern-split",
+        image_src: "/images/cv-templates/modern-split.jpg"
+    },
+
 ]
 
 export const dummyResumeData = [

@@ -24,6 +24,9 @@ const ResumePreview = ({ data, template, accentColor, classes = "", setShowTempl
             case "minimal":
                 return <MinimalTemplate data={data} accentColor={accentColor} />
 
+            case "modern-split":
+                return <ModernSplitTemplate data={data} accentColor={accentColor} />
+
 
             default:
                 return <ClassicTemplate data={data} accentColor={accentColor} />
